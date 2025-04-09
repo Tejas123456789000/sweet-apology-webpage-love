@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Heart, Image, Music, Book } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Heart, Image, Music, Book, Play, Pause } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { 
   Carousel,
@@ -10,10 +10,14 @@ import {
   CarouselPrevious
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const SweetApology: React.FC = () => {
   const [showFullMessage, setShowFullMessage] = useState(false);
   const [currentSection, setCurrentSection] = useState<'message' | 'photos' | 'poems' | 'songs'>('message');
+  const [playingSongIndex, setPlayingSongIndex] = useState<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   
   // You can replace these with your actual content
   const photos = [
@@ -36,21 +40,37 @@ const SweetApology: React.FC = () => {
   const songs = [
     { 
       title: "Whispers of Apology", 
-      lyrics: "When shadows fall and light grows dim,\nI reach for memories where we begin.\nThrough all my faults and all my flaws,\nMy love for you has never paused."
+      lyrics: "When shadows fall and light grows dim,\nI reach for memories where we begin.\nThrough all my faults and all my flaws,\nMy love for you has never paused.",
+      audioSrc: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
     },
     { 
       title: "Healing Hearts", 
-      lyrics: "Let these words mend what I broke,\nRevive the trust that sorrow stole.\nWith every note and every line,\nI pray your heart rejoins with mine."
+      lyrics: "Let these words mend what I broke,\nRevive the trust that sorrow stole.\nWith every note and every line,\nI pray your heart rejoins with mine.",
+      audioSrc: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
     },
   ];
 
+  const playPauseSong = (index: number) => {
+    if (playingSongIndex === index) {
+      audioRef.current?.pause();
+      setPlayingSongIndex(null);
+    } else {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+      audioRef.current = new Audio(songs[index].audioSrc);
+      audioRef.current.play();
+      setPlayingSongIndex(index);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDE1D3] to-[#E5DEFF] p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0F1923] to-[#1EAEDB] p-4">
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="bg-white/80 backdrop-blur-md rounded-xl shadow-lg p-8 max-w-4xl w-full"
+        className="bg-white/20 backdrop-blur-md rounded-xl shadow-lg p-8 max-w-4xl w-full border border-white/30"
       >
         <motion.div
           initial={{ scale: 1 }}
@@ -62,49 +82,41 @@ const SweetApology: React.FC = () => {
           }}
           className="flex justify-center mb-6"
         >
-          <Heart color="#FF6B6B" size={64} fill="#FFD93D" fillOpacity={0.3} />
+          <Heart color="#FF6B6B" size={64} fill="#1EAEDB" fillOpacity={0.5} />
         </motion.div>
 
-        <h1 className="text-4xl font-bold text-center text-gray-800 mb-4 font-serif">
+        <h1 className="text-4xl font-bold text-center text-white mb-4 font-serif">
           I'm Sorry
         </h1>
 
-        <div className="flex justify-center space-x-4 my-6">
-          <NavButton 
-            icon={<Heart size={20} />} 
-            label="Message" 
-            active={currentSection === 'message'} 
-            onClick={() => setCurrentSection('message')} 
-          />
-          <NavButton 
-            icon={<Image size={20} />} 
-            label="Photos" 
-            active={currentSection === 'photos'} 
-            onClick={() => setCurrentSection('photos')} 
-          />
-          <NavButton 
-            icon={<Book size={20} />} 
-            label="Poems" 
-            active={currentSection === 'poems'} 
-            onClick={() => setCurrentSection('poems')} 
-          />
-          <NavButton 
-            icon={<Music size={20} />} 
-            label="Songs" 
-            active={currentSection === 'songs'} 
-            onClick={() => setCurrentSection('songs')} 
-          />
-        </div>
+        <Tabs defaultValue="message" className="w-full" onValueChange={(value) => setCurrentSection(value as any)}>
+          <TabsList className="grid w-full grid-cols-4 bg-black/20">
+            <TabsTrigger value="message" className="data-[state=active]:bg-[#1EAEDB] data-[state=active]:text-white">
+              <Heart size={18} className="mr-2" />
+              Message
+            </TabsTrigger>
+            <TabsTrigger value="photos" className="data-[state=active]:bg-[#1EAEDB] data-[state=active]:text-white">
+              <Image size={18} className="mr-2" />
+              Photos
+            </TabsTrigger>
+            <TabsTrigger value="poems" className="data-[state=active]:bg-[#1EAEDB] data-[state=active]:text-white">
+              <Book size={18} className="mr-2" />
+              Poems
+            </TabsTrigger>
+            <TabsTrigger value="songs" className="data-[state=active]:bg-[#1EAEDB] data-[state=active]:text-white">
+              <Music size={18} className="mr-2" />
+              Songs
+            </TabsTrigger>
+          </TabsList>
 
-        <div className="mt-8">
-          {currentSection === 'message' && (
+          <TabsContent value="message" className="mt-6">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
               className="text-center"
             >
-              <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+              <p className="text-lg text-white mb-6 leading-relaxed">
                 I know I hurt you, and I deeply regret my actions. 
                 {showFullMessage && (
                   <>
@@ -123,7 +135,7 @@ const SweetApology: React.FC = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowFullMessage(true)}
-                  className="bg-[#FFDEE2] text-gray-800 px-6 py-3 rounded-full hover:bg-[#FFB6C1] transition-colors"
+                  className="bg-[#1EAEDB] text-white px-6 py-3 rounded-full hover:bg-[#33C3F0] transition-colors"
                 >
                   Read More
                 </motion.button>
@@ -135,15 +147,15 @@ const SweetApology: React.FC = () => {
                   animate={{ opacity: 1 }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-[#E5DEFF] text-gray-800 px-6 py-3 rounded-full hover:bg-[#D3C4FF] transition-colors"
+                  className="bg-white text-[#1EAEDB] px-6 py-3 rounded-full hover:bg-gray-100 transition-colors"
                 >
                   I Hope You Can Forgive Me
                 </motion.button>
               )}
             </motion.div>
-          )}
+          </TabsContent>
 
-          {currentSection === 'photos' && (
+          <TabsContent value="photos" className="mt-6">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -154,7 +166,7 @@ const SweetApology: React.FC = () => {
                   {photos.map((photo, index) => (
                     <CarouselItem key={index}>
                       <div className="p-1">
-                        <Card>
+                        <Card className="border-[#1EAEDB]/30 bg-white/10">
                           <CardContent className="flex flex-col items-center justify-center p-6">
                             <div className="aspect-[16/9] w-full overflow-hidden rounded-lg">
                               <img
@@ -163,20 +175,20 @@ const SweetApology: React.FC = () => {
                                 className="h-full w-full object-cover transition-all hover:scale-105"
                               />
                             </div>
-                            <p className="mt-4 text-center text-gray-600 italic">{photo.caption}</p>
+                            <p className="mt-4 text-center text-white italic">{photo.caption}</p>
                           </CardContent>
                         </Card>
                       </div>
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="left-1" />
-                <CarouselNext className="right-1" />
+                <CarouselPrevious className="left-1 bg-white/20 hover:bg-white/40" />
+                <CarouselNext className="right-1 bg-white/20 hover:bg-white/40" />
               </Carousel>
             </motion.div>
-          )}
+          </TabsContent>
 
-          {currentSection === 'poems' && (
+          <TabsContent value="poems" className="mt-6">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -187,22 +199,22 @@ const SweetApology: React.FC = () => {
                 <CarouselContent>
                   {poems.map((poem, index) => (
                     <CarouselItem key={index}>
-                      <Card className="border-[#FFB6C1] bg-white/90">
+                      <Card className="border-[#1EAEDB]/30 bg-white/10">
                         <CardContent className="p-6">
-                          <h3 className="text-2xl font-serif text-gray-800 mb-4 text-center">{poem.title}</h3>
-                          <p className="text-gray-600 whitespace-pre-line text-center leading-relaxed">{poem.content}</p>
+                          <h3 className="text-2xl font-serif text-white mb-4 text-center">{poem.title}</h3>
+                          <p className="text-white/90 whitespace-pre-line text-center leading-relaxed">{poem.content}</p>
                         </CardContent>
                       </Card>
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="left-1" />
-                <CarouselNext className="right-1" />
+                <CarouselPrevious className="left-1 bg-white/20 hover:bg-white/40" />
+                <CarouselNext className="right-1 bg-white/20 hover:bg-white/40" />
               </Carousel>
             </motion.div>
-          )}
+          </TabsContent>
 
-          {currentSection === 'songs' && (
+          <TabsContent value="songs" className="mt-6">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -213,54 +225,34 @@ const SweetApology: React.FC = () => {
                 <CarouselContent>
                   {songs.map((song, index) => (
                     <CarouselItem key={index}>
-                      <Card className="border-[#D3C4FF] bg-white/90">
+                      <Card className="border-[#1EAEDB]/30 bg-white/10">
                         <CardContent className="p-6">
                           <div className="flex justify-center mb-4">
-                            <Music size={32} className="text-[#9b87f5]" />
+                            <Button 
+                              variant="outline" 
+                              size="icon"
+                              className="bg-[#1EAEDB] text-white hover:bg-[#33C3F0] rounded-full h-12 w-12"
+                              onClick={() => playPauseSong(index)}
+                            >
+                              {playingSongIndex === index ? <Pause size={20} /> : <Play size={20} />}
+                            </Button>
                           </div>
-                          <h3 className="text-2xl font-serif text-gray-800 mb-4 text-center">{song.title}</h3>
-                          <p className="text-gray-600 whitespace-pre-line text-center italic leading-relaxed">{song.lyrics}</p>
+                          <h3 className="text-2xl font-serif text-white mb-4 text-center">{song.title}</h3>
+                          <p className="text-white/90 whitespace-pre-line text-center italic leading-relaxed">{song.lyrics}</p>
                         </CardContent>
                       </Card>
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="left-1" />
-                <CarouselNext className="right-1" />
+                <CarouselPrevious className="left-1 bg-white/20 hover:bg-white/40" />
+                <CarouselNext className="right-1 bg-white/20 hover:bg-white/40" />
               </Carousel>
             </motion.div>
-          )}
-        </div>
+          </TabsContent>
+        </Tabs>
       </motion.div>
     </div>
   );
 };
-
-// Navigation Button Component
-const NavButton = ({ 
-  icon, 
-  label, 
-  active, 
-  onClick 
-}: { 
-  icon: React.ReactNode; 
-  label: string; 
-  active: boolean; 
-  onClick: () => void;
-}) => (
-  <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    onClick={onClick}
-    className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-colors ${
-      active 
-        ? 'bg-[#9b87f5] text-white' 
-        : 'bg-white/50 text-gray-700 hover:bg-white/70'
-    }`}
-  >
-    {icon}
-    <span>{label}</span>
-  </motion.button>
-);
 
 export default SweetApology;
