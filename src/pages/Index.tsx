@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Heart, Image, Music, Book, Play, Pause, RotateCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,7 +21,6 @@ const SweetApology: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
   
-  // You can replace these with your actual content
   const photos = [
     { url: "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb", caption: "Starry night reminds me of your eyes" },
     { url: "https://images.unsplash.com/photo-1500673922987-e212871fec22", caption: "Every sunset makes me think of you" },
@@ -74,12 +72,11 @@ const SweetApology: React.FC = () => {
     }
   };
 
-  // Show welcome notification when site is opened
   useEffect(() => {
     const timer = setTimeout(() => {
       toast({
-        title: "Welcome to My Apology",
-        description: "I've created this to show you how sorry I am.",
+        title: "A Message for Samriddhi Chauhan",
+        description: "I've created this special apology just for you.",
         variant: "default"
       });
     }, 1500);
@@ -89,10 +86,8 @@ const SweetApology: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0F1923] via-[#1A3254] to-[#1EAEDB] p-4 overflow-hidden relative">
-      {/* Valorant Characters in the background */}
       <ValorantCharacters />
 
-      {/* Animated particles in Valorant style */}
       <div className="absolute inset-0 z-0 opacity-20">
         {[...Array(30)].map((_, i) => (
           <motion.div
@@ -147,7 +142,7 @@ const SweetApology: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          I'm Sorry
+          I'm Sorry, Samriddhi Chauhan
         </motion.h1>
 
         <Tabs defaultValue="message" className="w-full" onValueChange={(value) => setCurrentSection(value as any)}>
